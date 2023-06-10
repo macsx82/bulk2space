@@ -1,5 +1,6 @@
 import pandas as pd
 import scanpy
+import time
 from collections import defaultdict
 import numpy as np
 from scipy.optimize import nnls
@@ -8,20 +9,28 @@ from scipy.optimize import nnls
 def load_data(input_bulk_path,
               input_sc_data_path,
               input_sc_meta_path,
-              input_st_data_path,
-              input_st_meta_path):
+              input_st_data_path="",
+              input_st_meta_path=""):
     input_sc_meta_path = input_sc_meta_path
     input_sc_data_path = input_sc_data_path
     input_bulk_path = input_bulk_path
     input_st_meta_path = input_st_meta_path
     input_st_data_path = input_st_data_path
     print("loading data......")
+    #add some time check to see improvements and for debugging
+    start_sc_load_time = time.time()
     input_data = {}
     # load sc_meta.csv file, containing two columns of cell name and cell type
     input_data["input_sc_meta"] = pd.read_csv(input_sc_meta_path, index_col=0)
     # load sc_data.csv file, containing gene expression of each cell
     input_sc_data = pd.read_csv(input_sc_data_path, index_col=0)
     input_data["sc_gene"] = input_sc_data._stat_axis.values.tolist()
+    
+    #add some time check to see improvements and for debugging
+    end_sc_load_time = time.time()
+    elapsed_sc_load_time=end_sc_load_time-start_sc_load_time
+    print("SC reference data loaded in : {elapsed_sc_load_time} sec")
+    
     # load bulk.csv file, containing one column of gene expression in bulk
     input_bulk = pd.read_csv(input_bulk_path, index_col=0)
     input_data["bulk_gene"] = input_bulk._stat_axis.values.tolist()
@@ -29,9 +38,12 @@ def load_data(input_bulk_path,
     input_data["intersect_gene"] = list(set(input_data["sc_gene"]).intersection(set(input_data["bulk_gene"])))
     input_data["input_sc_data"] = input_sc_data.loc[input_data["intersect_gene"]]
     input_data["input_bulk"] = input_bulk.loc[input_data["intersect_gene"]]
-    # load st_meta.csv and st_data.csv, containing coordinates and gene expression of each spot respectively.
-    input_data["input_st_meta"] = pd.read_csv(input_st_meta_path, index_col=0)
-    input_data["input_st_data"] = pd.read_csv(input_st_data_path, index_col=0)
+   # load st_meta.csv and st_data.csv, containing coordinates and gene expression of each spot respectively.
+    if not input_st_data_path :
+        print("No spatial reference provided")
+    else :
+        input_data["input_st_meta"] = pd.read_csv(input_st_meta_path, index_col=0)
+        input_data["input_st_data"] = pd.read_csv(input_st_data_path, index_col=0)
     print("load data done!")
     
     return input_data
