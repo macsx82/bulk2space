@@ -29,7 +29,7 @@ def load_data(input_bulk_path,
     #add some time check to see improvements and for debugging
     end_sc_load_time = time.time()
     elapsed_sc_load_time=end_sc_load_time-start_sc_load_time
-    print("SC reference data loaded in : {elapsed_sc_load_time} sec")
+    print(f"SC reference data loaded in : {elapsed_sc_load_time} sec")
     
     # load bulk.csv file, containing one column of gene expression in bulk
     input_bulk = pd.read_csv(input_bulk_path, index_col=0)

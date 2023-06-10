@@ -94,6 +94,7 @@ class Bulk2Space:
         print('generating done!')
         return generate_sc_meta, generate_sc_data
 
+
     def train_df_and_spatial_deconvolution(self,
                                            generate_sc_meta,
                                            generate_sc_data,
