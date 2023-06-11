@@ -332,11 +332,12 @@ class Bulk2Space:
             os.makedirs(generate_save_dir)
         path_label_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_celltype.csv")
         # path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv.gz")
-        path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv.gz")
+        path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.h5")
 
         generate_sc_meta.to_csv(path_label_generate_csv)
         start_sc_save_time = time.time()
-        generate_sc_data.to_csv(path_cell_generate_csv, chunksize=10000)
+        # generate_sc_data.to_csv(path_cell_generate_csv, chunksize=10000)
+        generate_sc_data.to_hdf(path_cell_generate_csv, key=generate_save_name, mode='w')
         end_sc_save_time = time.time()
         elapsed_sc_save_time=end_sc_save_time-start_sc_save_time
         print(f"SC reference data saved in : {elapsed_sc_save_time} sec")
