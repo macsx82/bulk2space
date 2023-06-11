@@ -6,6 +6,7 @@ from .vae import train_vae, generate_vae, load_vae
 from .map_utils import create_data, DFRunner, joint_analysis, knn
 import os
 import warnings
+import time
 warnings.filterwarnings("ignore")
 
 
