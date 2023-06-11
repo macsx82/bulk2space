@@ -97,12 +97,9 @@ class Bulk2Space:
 ################################################################################################################################
 ##### Define two new functions to be able to train and load the model uploading only one the big sc_reference ##################
 ################################################################################################################################
+    # same as previous function, but using already loaded data
     def train_vae_and_generate_loaded(self,
-                               input_bulk_path,
-                               input_sc_data_path,
-                               input_sc_meta_path,
-                               input_st_data_path,
-                               input_st_meta_path,
+                               existing_input_data,
                                ratio_num=1,
                                top_marker_num=500,
                                vae_save_dir='save_model',
@@ -115,11 +112,7 @@ class Bulk2Space:
                                hidden_size=256,
                                epoch_num=5000):
         used_device = torch.device(f"cuda:{gpu}") if gpu >= 0 and torch.cuda.is_available() else torch.device('cpu')
-        input_data = load_data(input_bulk_path,
-                               input_sc_data_path,
-                               input_sc_meta_path,
-                               input_st_data_path,
-                               input_st_meta_path)
+        input_data = existing_input_data
         cell_target_num = data_process(input_data, top_marker_num, ratio_num)
         single_cell, label, breed_2_list, index_2_gene, cell_number_target_num, \
         nclass, ntrain, feature_size = self.__get_model_input(input_data, cell_target_num)
@@ -145,13 +138,10 @@ class Bulk2Space:
         self.__save_generation(generate_sc_meta, generate_sc_data,
                                generate_save_dir, generate_save_name)
         return generate_sc_meta, generate_sc_data
-
+        
+    # same as previous function, but using already loaded data
     def load_vae_and_generate_loaded(self,
-                              input_bulk_path,
-                              input_sc_data_path,
-                              input_sc_meta_path,
-                              input_st_data_path,
-                              input_st_meta_path,
+                              existing_input_data,
                               vae_load_dir,  # load_dir
                               ratio_num=1,
                               top_marker_num=500,
@@ -160,11 +150,7 @@ class Bulk2Space:
                               gpu=0,
                               hidden_size=256):
         used_device = torch.device(f"cuda:{gpu}") if gpu >= 0 and torch.cuda.is_available() else torch.device('cpu')
-        input_data = load_data(input_bulk_path,
-                               input_sc_data_path,
-                               input_sc_meta_path,
-                               input_st_data_path,
-                               input_st_meta_path)
+        input_data = existing_input_data
         cell_target_num = data_process(input_data, top_marker_num, ratio_num)
         single_cell, label, breed_2_list, index_2_gene, cell_number_target_num, \
         nclass, ntrain, feature_size = self.__get_model_input(input_data, cell_target_num)

@@ -59,12 +59,8 @@ def load_bulk_data(input_bulk_path,existing_input_data):
     #add some time check to see improvements and for debugging
     start_sc_load_time = time.time()
     #we want to add a different bulk dataset to the existing input data, to perform the gene intersection since it could be useful
+    input_sc_data=existing_input_data["input_sc_data"]
     input_data = existing_input_data
-    # load sc_meta.csv file, containing two columns of cell name and cell type
-    # input_data["input_sc_meta"] = pd.read_csv(input_sc_meta_path, index_col=0)
-    # load sc_data.csv file, containing gene expression of each cell
-    # input_sc_data = pd.read_csv(input_sc_data_path, index_col=0)
-    # input_data["sc_gene"] = input_sc_data._stat_axis.values.tolist()
     
     # load bulk.csv file, containing one column of gene expression in bulk
     input_bulk = pd.read_csv(input_bulk_path, index_col=0)
