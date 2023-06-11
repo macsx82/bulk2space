@@ -337,7 +337,7 @@ class Bulk2Space:
         generate_sc_meta.to_csv(path_label_generate_csv)
         start_sc_save_time = time.time()
         # generate_sc_data.to_csv(path_cell_generate_csv, chunksize=10000)
-        generate_sc_data.to_hdf(path_cell_generate_csv, key=generate_save_name, mode='w')
+        generate_sc_data.to_hdf(path_cell_generate_csv, key=generate_save_name, mode='w', complevel=5)
         end_sc_save_time = time.time()
         elapsed_sc_save_time=end_sc_save_time-start_sc_save_time
         print(f"SC reference data saved in : {elapsed_sc_save_time} sec")
