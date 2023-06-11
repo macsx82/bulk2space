@@ -138,7 +138,7 @@ class Bulk2Space:
         self.__save_generation(generate_sc_meta, generate_sc_data,
                                generate_save_dir, generate_save_name)
         return generate_sc_meta, generate_sc_data
-        
+
     # same as previous function, but using already loaded data
     def load_vae_and_generate_loaded(self,
                               existing_input_data,
@@ -330,7 +330,7 @@ class Bulk2Space:
         if not os.path.exists(generate_save_dir):
             os.makedirs(generate_save_dir)
         path_label_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_celltype.csv")
-        path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv")
+        path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv.gz")
 
         generate_sc_meta.to_csv(path_label_generate_csv)
         generate_sc_data.to_csv(path_cell_generate_csv)
