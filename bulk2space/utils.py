@@ -48,6 +48,41 @@ def load_data(input_bulk_path,
     
     return input_data
 
+#function to add a different bulk dataset to an existing loaded dataset created with load_data function
+def load_bulk_data(input_bulk_path,existing_input_data):
+    # input_sc_meta_path = input_sc_meta_path
+    # input_sc_data_path = input_sc_data_path
+    input_bulk_path = input_bulk_path
+    # input_st_meta_path = input_st_meta_path
+    # input_st_data_path = input_st_data_path
+    print("loading bulk data......")
+    #add some time check to see improvements and for debugging
+    start_sc_load_time = time.time()
+    #we want to add a different bulk dataset to the existing input data, to perform the gene intersection since it could be useful
+    input_data = existing_input_data
+    # load sc_meta.csv file, containing two columns of cell name and cell type
+    # input_data["input_sc_meta"] = pd.read_csv(input_sc_meta_path, index_col=0)
+    # load sc_data.csv file, containing gene expression of each cell
+    # input_sc_data = pd.read_csv(input_sc_data_path, index_col=0)
+    # input_data["sc_gene"] = input_sc_data._stat_axis.values.tolist()
+    
+    # load bulk.csv file, containing one column of gene expression in bulk
+    input_bulk = pd.read_csv(input_bulk_path, index_col=0)
+    input_data["bulk_gene"] = input_bulk._stat_axis.values.tolist()
+    
+    #add some time check to see improvements and for debugging
+    end_sc_load_time = time.time()
+    elapsed_sc_load_time=end_sc_load_time-start_sc_load_time
+    print(f"Bulk data loaded in : {elapsed_sc_load_time} sec")
+    
+    # filter overlapping genes.
+    input_data["intersect_gene"] = list(set(input_data["sc_gene"]).intersection(set(input_data["bulk_gene"])))
+    input_data["input_sc_data"] = input_sc_data.loc[input_data["intersect_gene"]]
+    input_data["input_bulk"] = input_bulk.loc[input_data["intersect_gene"]]
+   
+    print("load data done!")
+    
+    return input_data
 
 def data_process(data, top_marker_num, ratio_num):
     # marker used
