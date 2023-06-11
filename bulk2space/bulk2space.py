@@ -330,8 +330,10 @@ class Bulk2Space:
         if not os.path.exists(generate_save_dir):
             os.makedirs(generate_save_dir)
         path_label_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_celltype.csv")
+        # path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv.gz")
         path_cell_generate_csv = os.path.join(generate_save_dir, f"{generate_save_name}_sc_data.csv.gz")
 
         generate_sc_meta.to_csv(path_label_generate_csv)
-        generate_sc_data.to_csv(path_cell_generate_csv)
+        generate_sc_data.to_csv(path_cell_generate_csv, chunksize=10000)
+        # generate_sc_data.to_hdf(path_cell_generate_csv)
         print(f"saving to {path_label_generate_csv} and {path_cell_generate_csv}.")
