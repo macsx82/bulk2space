@@ -23,7 +23,7 @@ def load_data(input_bulk_path,
     # load sc_meta.csv file, containing two columns of cell name and cell type
     input_data["input_sc_meta"] = pd.read_csv(input_sc_meta_path, index_col=0)
     # load sc_data.csv file, containing gene expression of each cell
-    input_sc_data = pd.read_csv(input_sc_data_path, index_col=0)
+    input_sc_data = pd.read_csv(input_sc_data_path, index_col=0,engine="pyarrow")
     input_data["sc_gene"] = input_sc_data._stat_axis.values.tolist()
     
     #add some time check to see improvements and for debugging
