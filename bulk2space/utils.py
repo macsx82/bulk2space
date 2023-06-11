@@ -24,8 +24,12 @@ def load_data(input_bulk_path,
     # load sc_meta.csv file, containing two columns of cell name and cell type
     input_data["input_sc_meta"] = pd.read_csv(input_sc_meta_path, index_col=0)
     # load sc_data.csv file, containing gene expression of each cell
-    # input_sc_data = pd.read_csv(input_sc_data_path, index_col=0,engine="pyarrow")
-    input_sc_data = csv.read_csv(input_sc_data_path, index_col=0)
+    # input_sc_data = pd.read_csv(input_sc_data_path, index_col=0)
+    # use the super fast pyarrow to read the table and to convert it to pd df
+    input_sc_data = csv.read_csv(input_sc_data_path, read_options=csv.ReadOptions(block_size=1e9)).to_pandas()
+    # add index to dataframe
+    input_sc_data.set_index('', inplace=True)
+
     input_data["sc_gene"] = input_sc_data._stat_axis.values.tolist()
     
     #add some time check to see improvements and for debugging
