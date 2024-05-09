@@ -96,7 +96,7 @@ class Bulk2Space:
         return generate_sc_meta, generate_sc_data
 
 ################################################################################################################################
-##### Define two new functions to be able to train and load the model uploading only one the big sc_reference ##################
+##### Define two new functions to be able to train and load the model uploading only once the big sc_reference ##################
 ################################################################################################################################
     # same as previous function, but using already loaded data
     def train_vae_and_generate_loaded(self,
