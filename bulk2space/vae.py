@@ -46,7 +46,10 @@ class VAE(nn.Module):
         x = x.to(used_device)
         encoder_output = self.encode(x)
         mu, sigma = torch.chunk(encoder_output, 2, dim=1)  # mu, log_var
-        hidden = torch.randn_like(sigma) + mu * torch.exp(sigma) ** 0.5  # var => std
+        # 7/6/2024 - apparently, this is not correct!!!
+        # hidden = torch.randn_like(sigma) + mu * torch.exp(sigma) ** 0.5  # var => std
+        # the reparametrization should be:
+        hidden = mu + torch.randn_like(sigma) * torch.exp(sigma) ** 0.5  # var => std
         x_hat = self.decode(hidden)
         kl_div = 0.5 * torch.sum(torch.exp(sigma) + torch.pow(mu, 2) - 1 - sigma) / (x.shape[0] * x.shape[1])
         return x_hat, kl_div

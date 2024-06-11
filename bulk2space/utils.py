@@ -56,11 +56,7 @@ def load_data(input_bulk_path,
 
 #function to add a different bulk dataset to an existing loaded dataset created with load_data function
 def load_bulk_data(input_bulk_path,existing_input_data):
-    # input_sc_meta_path = input_sc_meta_path
-    # input_sc_data_path = input_sc_data_path
     input_bulk_path = input_bulk_path
-    # input_st_meta_path = input_st_meta_path
-    # input_st_data_path = input_st_data_path
     print("loading bulk data......")
     #add some time check to see improvements and for debugging
     start_sc_load_time = time.time()
@@ -86,17 +82,23 @@ def load_bulk_data(input_bulk_path,existing_input_data):
     
     return input_data
 
+# define how many cells we will output (ratio_num parameter - fraction of the total numebr of cells in the reference)
+# and the label that are represented in the bulk RNA data 
 def data_process(data, top_marker_num, ratio_num):
     # marker used
     sc = scanpy.AnnData(data["input_sc_data"].T)
     sc.obs = data["input_sc_meta"][['Cell_type']]
+    #get the marker genes for each cluster, using the info in the 'Cell_type' label
     scanpy.tl.rank_genes_groups(sc, 'Cell_type', method='wilcoxon')
     marker_df = pd.DataFrame(sc.uns['rank_genes_groups']['names']).head(top_marker_num)
+    #now get the unique list of markes
     marker_array = np.array(marker_df)
     marker_array = np.ravel(marker_array)
     marker_array = np.unique(marker_array)
     marker = list(marker_array)
+    #get for all cells the markers in the unique list, so to work only on the genes that better define each cluster group
     sc_marker = data["input_sc_data"].loc[marker, :]
+    #get the same markers from the bulk data
     bulk_marker = data["input_bulk"].loc[marker]
 
     #  Data processing
@@ -118,6 +120,7 @@ def data_process(data, top_marker_num, ratio_num):
     for label, cells in label2cell.items():
         label_devide_data[label] = sc_marker[list(cells)]
 
+    #calculate the mean expression for each marker gene across all cells in the cluster
     single_cell_splitby_breed_np = {}
     for key in label_devide_data.keys():
         single_cell_splitby_breed_np[key] = label_devide_data[key].values  # [gene_num, cell_num]
@@ -132,10 +135,11 @@ def data_process(data, top_marker_num, ratio_num):
     single_cell_matrix = np.array(single_cell_matrix)
     single_cell_matrix = np.transpose(single_cell_matrix)  # (gene_num, label_num)
 
+    #now get the values for the bulk data
     bulk_marker = bulk_marker.values  # (gene_num, 1)
     bulk_rep = bulk_marker.reshape(bulk_marker.shape[0], )
 
-    # calculate celltype ratio in each spot by NNLS
+    # calculate celltype ratio in each spot by NNLS (NonNegativeLeastSquares): we are doing a regression to see if the bulk data and each cell type are correlated
     ratio = nnls(single_cell_matrix, bulk_rep)[0]
     ratio = ratio / sum(ratio)
 
