@@ -54,7 +54,7 @@ def load_data(input_bulk_path,
     
     return input_data
 
-#function to add a different bulk dataset to an existing loaded dataset created with load_data function
+# function to add a different bulk dataset to an existing loaded dataset created with load_data function
 def load_bulk_data(input_bulk_path,existing_input_data):
     input_bulk_path = input_bulk_path
     print("loading bulk data......")
