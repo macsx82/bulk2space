@@ -139,6 +139,18 @@ def load_vae(feature_size, hidden_size, path, used_device):
     return vae
 
 
+def load_vae_custom( hidden_size, path, used_device):
+    hidden_list = [2048, 1024, 512]
+    # we read the parameters from the saved model first, then we use the feature size provided from the model,
+    # as fixed parameter 
+    trained_model_params = torch.load(path, map_location=used_device)
+    feature_size = len(trained_model_params['decoder.3.bias'])
+    vae = VAE(feature_size, hidden_list, hidden_size).to(used_device)
+    vae.load_state_dict(torch.load(path, map_location=used_device))
+    
+    return vae
+
+
 def generate_vae(net, ratio, single_cell, label, breed_2_list, index_2_gene, cell_number_target_num=None,
                  used_device=None):
     # net in cuda now

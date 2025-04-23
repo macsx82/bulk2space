@@ -165,6 +165,32 @@ class Bulk2Space:
         print('generating done!')
         return generate_sc_meta, generate_sc_data
 
+################################################################################################################################
+# Define a new function to see what happens with fixed feature size
+    # same as previous function, but using already loaded data
+    def load_vae_and_generate_loaded_fixedfeatures(self,
+                              existing_input_data,
+                              vae_load_dir,  # load_dir
+                              ratio_num=1,
+                              top_marker_num=500,
+                              generate_save_dir='output',  # file_dir
+                              generate_save_name='generation',  # file_name
+                              gpu=0,
+                              hidden_size=256):
+        used_device = torch.device(f"cuda:{gpu}") if gpu >= 0 and torch.cuda.is_available() else torch.device('cpu')
+        input_data = existing_input_data
+        cell_target_num = data_process(input_data, top_marker_num, ratio_num)
+        single_cell, label, breed_2_list, index_2_gene, cell_number_target_num, \
+        nclass, ntrain, feature_size = self.__get_model_input(input_data, cell_target_num)
+        print(f'loading model from {vae_load_dir}')
+        vae_net = load_vae_custom(hidden_size, vae_load_dir, used_device)
+        print('generating....')
+        generate_sc_meta, generate_sc_data = generate_vae(vae_net, -1,
+                                                          single_cell, label, breed_2_list,
+                                                          index_2_gene, cell_number_target_num, used_device)
+        self.__save_generation(generate_sc_meta, generate_sc_data, generate_save_dir, generate_save_name)
+        print('generating done!')
+        return generate_sc_meta, generate_sc_data
 
 ################################################################################################################################
     def train_df_and_spatial_deconvolution(self,
